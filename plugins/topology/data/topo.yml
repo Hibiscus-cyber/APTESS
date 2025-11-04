@@ -1,0 +1,53 @@
+nodes:
+  - id: Pt
+    group: Platform
+    ip: 10.0.0.1
+    label: 平台
+
+  - id: Wt
+    group: Breached
+    ip: 10.0.0.2
+    label: Windows10主机
+
+  - id: LAt
+    group: Breached
+    ip: 10.0.0.3
+    label: 边界网关服务器
+
+  - id: SW1t
+    group: Other
+    label: 交换机1
+
+  - id: LBt
+    group: Breached
+    ip: 10.0.0.5
+    label: 内网服务器
+
+  - id: LCt
+    group: Idle
+    ip: [10.0.0.6, 10.0.0.8]
+    label: 网络管理服务器
+
+  - id: LDt
+    group: Idle
+    ip: [10.0.0.7, 10.0.0.9]
+    label: 数据库服务器
+
+  - id: SW2t
+    group: Other
+    label: 交换机2
+
+  - id: SW3t
+    group: Other
+    label: 交换机3
+
+links:
+  - source: [Pt, Wt,LAt]
+    target: SW1t
+  
+  - source: [LAt, LBt,LCt]
+    target: SW2t
+
+  - source: [LCt,LDt]
+    target: SW3t
+

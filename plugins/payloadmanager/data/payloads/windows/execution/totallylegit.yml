@@ -1,0 +1,26 @@
+# Windows Legitimate Executable
+# Platform: Windows
+# Tactics: execution, defense-evasion
+# Threat Level: Medium
+# File: plugins/stockpile/payloads/totallylegit.exe
+
+- id: 550e8400-e29b-41d4-a716-446655440007
+  name: Windows Legitimate Executable
+  description: Legitimate-looking Windows executable for testing purposes
+  md5: E25F103EDC4992089CF049754510390D
+  file_type: exe
+  file_size: 2234880
+  payload_file: plugins/stockpile/payloads/totallylegit.exe
+  tactics:
+    - execution
+    - defense-evasion
+  threat_level: Medium
+  platforms:
+    - windows
+  cve_references: []
+  apt_groups: []
+  tags:
+    - executable
+    - testing
+    - windows
+  plugin: payloadmanager

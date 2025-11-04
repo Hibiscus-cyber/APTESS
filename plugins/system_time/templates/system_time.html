@@ -1,0 +1,41 @@
+{% extends 'core.html' %}
+
+{% block body %}
+<div class="container">
+    <div class="card">
+        <header class="card-header">
+            <p class="card-header-title">
+                <span class="icon mr-2"><i class="fas fa-clock"></i></span>
+                系统时间
+            </p>
+        </header>
+        <div class="card-content">
+            <div class="content">
+                <p id="current-time" class="is-size-3 has-text-centered my-6">
+                    {{ current_time }}
+                </p>
+                <div class="has-text-centered">
+                    <button id="refresh-time" class="button is-primary">
+                        <span class="icon"><i class="fas fa-sync-alt"></i></span>
+                        <span>刷新时间</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 刷新时间按钮点击事件
+        document.getElementById('refresh-time').addEventListener('click', function() {
+            fetch('/plugin/system_time/current_time')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('current-time').textContent = data.current_time;
+                })
+                .catch(error => console.error('获取时间失败:', error));
+        });
+    });
+</script>
+{% endblock %}

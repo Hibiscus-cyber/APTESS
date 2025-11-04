@@ -1,0 +1,28 @@
+# Mimikatz Credential Dumper
+# Platform: Windows
+# Tactics: credential-access, defense-evasion
+# Threat Level: High
+# File: plugins/stockpile/payloads/Invoke-MemeKatz.ps1
+
+- id: 550e8400-e29b-41d4-a716-446655440001
+  name: Mimikatz Credential Dumper
+  description: PowerShell-based Mimikatz implementation for Windows credential dumping
+  md5: 7f8e9a2b3c4d5e6f7890123456789012
+  file_type: ps1
+  file_size: 15360
+  payload_file: plugins/stockpile/payloads/Invoke-MemeKatz.ps1
+  tactics: 
+    - credential-access
+    - defense-evasion
+  threat_level: High
+  platforms:
+    - windows
+  cve_references:
+    - CVE-2021-1234
+  apt_groups:
+    - APT29
+  tags:
+    - credential-dumping
+    - memory-analysis
+    - mimikatz
+  plugin: payloadmanager

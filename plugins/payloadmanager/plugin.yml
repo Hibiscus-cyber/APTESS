@@ -1,0 +1,4 @@
+name: 恶意载荷库
+description: 恶意载荷库管理插件
+version: 1.0.0
+enabled: true

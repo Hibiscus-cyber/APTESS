@@ -1,0 +1,38 @@
+# Breached、Engaging、Platform、Blocked、Idle、  Other
+# 攻陷、      攻击中、    平台、      失败 、    闲置、其他
+nodes:
+  - id: P
+    group: Platform
+    label: 平台
+    ip: 192.168.0.100
+  - id: W
+    group: Breached
+    label: Windows10主机
+    ip: 192.168.0.101
+  - id: LA
+    group: Breached
+    label: 边界网关服务器
+    ip: 
+      - 192.168.0.102
+      - 192.168.0.105
+  - id: SW
+    group: Other
+    label: 交换机1
+  - id: SW2
+    group: Other
+    label: 交换机2
+  - id: LB
+    group: Idle
+    label: 内网服务器
+    ip: 192.168.0.103
+  - id: LC
+    group: Idle
+    label: 网络管理服务器
+    ip: 192.168.0.104
+    
+links:
+  - source: [W,LA,P]
+    target: SW2
+
+  - source: [LB,LC,LA]
+    target: SW

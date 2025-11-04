@@ -1,0 +1,6 @@
+name: "\u653B\u51FB\u94FE(1):Linux\u8FB9\u754C\u7F51\u5173"
+description: linux
+atomic_ordering:
+- f9c57a54-360e-40a7-aab2-39815db6547a
+adversary_id: b57cfd1d-40fb-48dc-b130-0d91c46ec027
+objective: 495a9828-cab1-44dd-a0ca-66e58177d8cc

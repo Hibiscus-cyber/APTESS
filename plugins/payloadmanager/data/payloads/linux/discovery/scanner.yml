@@ -1,0 +1,25 @@
+# Linux Network Scanner
+# Platform: Linux
+# Tactics: discovery
+# Threat Level: Medium
+# File: plugins/access/data/payloads/scanner.sh
+
+- id: 550e8400-e29b-41d4-a716-446655440005
+  name: Linux Network Scanner
+  description: Basic NMAP network scanning tool for Linux reconnaissance
+  md5: 8a3b2c1d4e5f67890123456789012345
+  file_type: sh
+  file_size: 89
+  payload_file: plugins/access/data/payloads/scanner.sh
+  tactics:
+    - discovery
+  threat_level: Medium
+  platforms:
+    - linux
+  cve_references: []
+  apt_groups: []
+  tags:
+    - network-scanning
+    - reconnaissance
+    - nmap
+  plugin: payloadmanager

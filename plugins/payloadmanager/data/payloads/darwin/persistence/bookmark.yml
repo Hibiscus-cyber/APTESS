@@ -1,0 +1,25 @@
+# macOS WiFi Scanner
+# Platform: macOS (darwin)
+# Tactics: discovery
+# Threat Level: Low
+# File: plugins/stockpile/payloads/wifi.sh
+
+- id: 550e8400-e29b-41d4-a716-446655440004
+  name: macOS WiFi Scanner
+  description: WiFi network scanning and management tool for macOS
+  md5: 6f5e4d3c2b1a09876543210987654321
+  file_type: sh
+  file_size: 1024
+  payload_file: plugins/stockpile/payloads/wifi.sh
+  tactics:
+    - discovery
+  threat_level: Low
+  platforms:
+    - darwin
+  cve_references: []
+  apt_groups: []
+  tags:
+    - wifi-scanning
+    - network-discovery
+    - macos
+  plugin: payloadmanager

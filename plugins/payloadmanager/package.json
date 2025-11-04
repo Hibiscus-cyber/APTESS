@@ -1,0 +1,32 @@
+{
+  "name": "payloadmanager",
+  "version": "1.0.0",
+  "description": "恶意载荷库管理插件",
+  "author": "Team",
+  "license": "Apache-2.0",
+  "main": "gui/index.js",
+  "keywords": [
+    "plugin",
+    "payload",
+    "malware",
+    "management"
+  ],
+  "dependencies": {
+    "vue": "^3.0.0",
+    "pinia": "^2.0.0"
+  },
+  "caldera": {
+    "type": "plugin",
+    "category": "management",
+    "compatibility": ">=4.0.0",
+    "gui": {
+      "enabled": true,
+      "path": "gui/",
+      "entry": "index.js"
+    },
+    "api": {
+      "enabled": true,
+      "prefix": "/api/v2/payloads"
+    }
+  }
+}

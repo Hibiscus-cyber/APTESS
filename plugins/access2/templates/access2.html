@@ -1,0 +1,231 @@
+<!-- PAGE HEADER -->
+
+    <div x-ref="headerAccess">
+        <h2>Access2</h2>
+        <p>
+            Here you can task any agent with any ability from the database - outside the scope of an operation. 
+            This is especially useful for conducting initial access attacks. To do this, deploy an agent locally 
+            and task it with either pre-ATT&CK or initial access tactics, pointed at any target. You can even deploy 
+            an agent remotely and use it as a proxy to conduct your initial access attacks. To the right, you'll 
+            see every ability directly tasked to an agent.
+        </p>
+    </div>
+    <hr>
+
+    <!-- AGENT SELECTION -->
+    
+    <div>
+        <form>
+            <div id="select-agent" class="field has-addons">
+                <label class="label">Select an agent &nbsp;&nbsp;&nbsp;</label>
+                <div class="control is-expanded">
+                    <div class="select is-small is-fullwidth">
+                        <select x-on:change="selectAgent()" x-model="selectedAgentPaw">
+                            <option value="" disabled selected>Select an agent</option>
+                            <template x-for="agent of agents" :key="agent.paw">
+                                <option x-bind:value="agent.paw" x-text="`${agent.host} - ${agent.paw}`"></option>
+                            </template>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="has-text-centered content" x-show="!selectedAgentPaw">
+        <p>Select an agent to get started</p> 
+    </div>
+    
+    <div x-show="selectedAgentPaw">
+        <div class="is-flex" x-show="selectedAgentPaw">
+            <button class="button is-primary is-small mr-4" @click="showRunModal = true">
+                <span class="icon"><i class="fas fa-running"></i></span>
+                <span>Run an Ability</span>
+            </button>
+            <span class="mr-4"><strong>Agent Platform</strong>: <span x-text="selectedAgent.platform"></span></span>
+            <span><strong>Compatible Abilities</strong>: <span x-text="filteredAbilities.length"></span></span>
+        </div>
+       <p class="has-text-centered content" x-show="!links.length">No links to show</p> 
+    </div>
+
+    <div x-show="selectedAgentPaw && links.length">
+        <table class="table is-striped is-fullwidth">
+            <thead>
+                <tr>
+                    <th>order</th>
+                    <th>name</th>
+                    <th>tactic</th>
+                    <th>status</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <template x-for="(link, index) of links" :key="link.unique">
+                    <tr class="pointer">
+                        <td x-text="index + 1"></td>
+                        <td x-text="link.ability.name"></td>
+                        <td x-text="link.ability.tactic"></td>
+                        <td x-text="getLinkStatus(link)" x-bind:class="{ 'has-text-danger': getLinkStatus(link) === 'failed', 'has-text-success': getLinkStatus(link) === 'success' }"></td>
+                        <td>
+                            <button class="button is-small is-primary" @click="showOutput(link)">Output</button>
+                        </td>
+                    </tr>
+                </template>
+            </tbody>
+        </table>  
+    </div>
+
+    <!-- MODALS -->
+
+    <div class="modal" x-bind:class="{ 'is-active': showOutputModal }">
+        <div class="modal-background" @click="showOutputModal = false"></div>
+        <div class="modal-card wide">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Link Output</p>
+            </header>
+            <section class="modal-card-body">
+                <label class="label">Command</label>
+                <pre x-text="outputCommand"></pre>
+                <label class="label">Standard Output</label>
+                <pre x-text="outputResult.stdout || '[ no output to show ]'"></pre>
+                <label class="label">Standard Error</label>
+                <pre x-text="outputResult.stderr || '[ no errors to show ]'"></pre>
+            </section>
+            <footer class="modal-card-foot">
+                <nav class="level">
+                    <div class="level-left"></div>
+                    <div class="level-right">
+                        <div class="level-item">
+                            <button class="button is-small" @click="showOutputModal = false">Close</button>
+                        </div>
+                    </div>
+                </nav>
+            </footer>
+        </div>
+    </div>
+
+    <div class="modal" x-bind:class="{ 'is-active': showRunModal }">
+        <div class="modal-background" @click="showRunModal = false"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Run an Ability</p>
+            </header>
+            <section class="modal-card-body">
+                <p class="has-text-centered">Select an Ability</p>
+                <form>
+                    <div class="field is-horizontal">
+                        <div class="field-label is-small">
+                            <label class="label">
+                                <span class="icon is-small"><i class="fas fa-search"></i></span>
+                            </label>
+                        </div>
+                        <div class="field-body">
+                            <div class="field">
+                                <div class="control">
+                                    <input class="input is-small" v-model="searchQuery" placeholder="Search for an ability..." v-on:keyup="searchForAbility()">
+                                    <div class="search-results">
+                                        <template x-for="result in searchResults" :key="result.ability_id">
+                                            <p @click="selectAbility(result.ability_id)" x-text="result.name"></p>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <form>
+                    <div class="field is-horizontal">
+                        <div class="field-label is-small">
+                            <label class="label">Tactic</label>
+                        </div>
+                        <div class="field-body">
+                            <div class="field">
+                                <div class="control">
+                                    <div class="select is-small">
+                                        <select v-model="selectedTactic" @change="tacticFilter">
+                                            <option value="">All Tactics</option>
+                                            <option v-for="tactic in tactics" :key="tactic" v-bind:value="tactic" v-text="tactic"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <div class="scrollable-abilities">
+                    <template v-for="ability in filteredAbilities" :key="ability.ability_id">
+                        <div class="ability-selector-item" v-if="abilityMatchesSearch(ability) && abilityMatchesTactic(ability)" @click="selectAbility(ability.ability_id)">
+                            <span class="ability-name" v-text="ability.name"></span>
+                            <span class="ability-tactic" v-text="ability.tactic"></span>
+                        </div>
+                    </template>
+                </div>
+                <div class="mt-4" v-if="selectedAbilityId">
+                    <h3 class="title is-5" v-text="selectedAbility.name"></h3>
+                    <div class="field is-horizontal">
+                        <div class="field-label is-small">
+                            <label class="label">Description</label>
+                        </div>
+                        <div class="field-body">
+                            <div class="field">
+                                <p v-text="selectedAbility.description"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field is-horizontal">
+                        <div class="field-label is-small">
+                            <label class="label">Technique</label>
+                        </div>
+                        <div class="field-body">
+                            <div class="field">
+                                <p v-text="selectedAbility.technique_id"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field is-horizontal">
+                        <div class="field-label is-small">
+                            <label class="label">Executor</label>
+                        </div>
+                        <div class="field-body">
+                            <div class="field">
+                                <div class="select is-small">
+                                    <select v-model="selectedObfuscator">
+                                        <option v-for="obfuscator in obfuscators" :key="obfuscator.name" v-bind:value="obfuscator.name" v-text="obfuscator.name + ' (' + obfuscator.description + ')'"></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4" v-if="facts.length > 0">
+                    <h3 class="title is-5">Facts</h3>
+                    <p>Fill in the values for these facts</p>
+                    <div v-for="fact in facts" :key="fact.trait">
+                        <div class="field is-horizontal">
+                            <div class="field-label is-small">
+                                <label class="label" v-text="fact.trait"></label>
+                            </div>
+                            <div class="field-body">
+                                <div class="field">
+                                    <input class="input is-small" v-model="fact.value" v-bind:placeholder="'Enter value for ' + fact.trait">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <footer class="modal-card-foot">
+                <nav class="level">
+                    <div class="level-left"></div>
+                    <div class="level-right">
+                        <div class="level-item">
+                            <button class="button is-small is-primary" v-if="selectedAbilityId" @click="execute()">Execute</button>
+                        </div>
+                        <div class="level-item">
+                            <button class="button is-small" @click="showRunModal = false">Close</button>
+                        </div>
+                    </div>
+                </nav>
+            </footer>
+        </div>
+    </div>

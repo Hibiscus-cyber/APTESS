@@ -1,0 +1,25 @@
+# PowerShell Network Scanner
+# Platform: Windows
+# Tactics: discovery
+# Threat Level: Medium
+# File: plugins/stockpile/payloads/basic_scanner.ps1
+
+- id: 550e8400-e29b-41d4-a716-446655440003
+  name: PowerShell Network Scanner
+  description: Advanced network scanning tool for Windows using PowerShell
+  md5: 9a8b7c6d5e4f32109876543210987654
+  file_type: ps1
+  file_size: 15360
+  payload_file: plugins/stockpile/payloads/basic_scanner.ps1
+  tactics:
+    - discovery
+  threat_level: Medium
+  platforms:
+    - windows
+  cve_references: []
+  apt_groups: []
+  tags:
+    - network-scanning
+    - powershell
+    - reconnaissance
+  plugin: payloadmanager

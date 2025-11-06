@@ -36,6 +36,9 @@ const tabNameMap = {
   planners: "策略规划",
   obfuscators: "混淆器",
   NotFound: "未找到页面",
+  profile:"载荷画像",
+  vulnerability: "漏洞库",
+  topology:"网络拓扑图",
 };
 
 let { openTabs, activeTab } = storeToRefs(coreDisplayStore);

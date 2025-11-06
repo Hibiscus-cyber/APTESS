@@ -1,0 +1,17 @@
+name: Demo1
+file_name: demo.yml
+platform:
+- Windows
+tactic:
+- Execution
+- Credential Access
+risk: Low
+description: This is a demo1 Profile ! !
+file_type: yml
+profile_id: a5e2d1ba-a751-4685-baeb-27923ec4825d
+platforms:
+- Windows
+- Linux
+tactics:
+- Discovery
+- Privilege Escalation

@@ -22,6 +22,8 @@ from app.objects.secondclass.c_parser import Parser
 from app.objects.secondclass.c_requirement import Requirement, RequirementSchema
 from app.service.interfaces.i_data_svc import DataServiceInterface
 from app.utility.base_service import BaseService
+from app.objects.c_profile import Profile 
+from app.objects.c_vulnerability import Vulnerability
 
 MIN_MODULE_LEN = 1
 
@@ -35,6 +37,8 @@ DATA_FILE_GLOBS = (
     'data/results/*',
     'data/sources/*',
     'data/object_store',
+    'data/profiles/*',
+    'data/vulnerabilities/*',
 )
 
 PAYLOADS_CONFIG_STANDARD_KEY = 'standard_payloads'
@@ -49,7 +53,7 @@ class DataService(DataServiceInterface, BaseService):
     def __init__(self):
         self.log = self.add_service('data_svc', self)
         self.schema = dict(agents=[], planners=[], adversaries=[], abilities=[], sources=[], operations=[],
-                           schedules=[], plugins=[], obfuscators=[], objectives=[], data_encoders=[])
+                           schedules=[], plugins=[], obfuscators=[], objectives=[], data_encoders=[],profiles=[], vulnerabilities=[],)
         self.ram = copy.deepcopy(self.schema)
 
     @staticmethod
@@ -253,58 +257,100 @@ class DataService(DataServiceInterface, BaseService):
         warnings.warn(DEPRECATION_WARNING_LOAD, DeprecationWarning, stacklevel=2)
         await self.load_yaml_file(Objective, filename, access)
 
+    async def _load_profiles(self, plugin): # 能进入函数，能够识别filename，但是loadyamlfile函数是否成功执行不清楚，ram中不存在profile的数据
+        # plugins/<name>/data/profiles/*.yml 或 data/profiles/*.yml
+        for filename in glob.iglob('%s/profiles/*.yml' % plugin.data_dir, recursive=False):
+            await self.load_yaml_file(Profile, filename, plugin.access)
+
+    async def _load_vulnerabilities(self, plugin): 
+        for filename in glob.iglob('%s/vulnerabilities/*.yml' % plugin.data_dir, recursive=False):
+            await self.load_yaml_file(Vulnerability, filename, plugin.access)
+
     async def load_yaml_file(self, object_class, filename, access):
+
         for src in self.strip_yml(filename):
             obj = object_class.load(src)
             obj.access = access
             obj.plugin = self._get_plugin_name(filename)
+
             await self.store(obj)
 
     async def create_or_update_everything_adversary(self):
+        abilities = await self.locate('abilities')
+        if abilities is None:
+            abilities = []
+
+        atomic_ordering = []
+        for ability in abilities:
+            try:
+                if ability.plugin != 'training':
+                    continue
+
+                if ability.access == self.Access.RED or ability.access == self.Access.APP:
+                    atomic_ordering.append(ability.ability_id)
+            except (AttributeError, TypeError):
+                continue
+
         everything = {
             'id': '785baa02-df5d-450a-ab3a-1a863f22b4b0',
             'name': 'Everything Bagel',
             'description': 'An adversary with all adversary abilities',
-            'atomic_ordering': [
-                ability.ability_id
-                for ability in await self.locate('abilities')
-                if (
-                    ability.access == self.Access.RED
-                    or ability.access == self.Access.APP
-                )
-                and ability.plugin != 'training'
-            ],
+            'atomic_ordering': atomic_ordering,
         }
-        obj = Adversary.load(everything)
-        obj.access = self.Access.RED
-        await self.store(obj)
+
+        try:
+            obj = Adversary.load(everything)
+            obj.access = self.Access.RED
+            await self.store(obj)
+        except Exception as e:
+            self.log.debug(f"Failed to create everything adversary: {e}")
 
     async def _load(self, plugins=()):
-        try:
-            async_tasks = []
-            if not plugins:
-                plugins = [p for p in await self.locate('plugins') if p.data_dir and p.enabled]
-            if not [plugin for plugin in plugins if plugin.data_dir == 'data']:
-                plugins.append(Plugin(data_dir='data'))
-            for plug in plugins:
-                await self._load_payloads(plug)
-                await self._load_abilities(plug, async_tasks)
-                await self._load_objectives(plug)
-                await self._load_adversaries(plug)
-                await self._load_planners(plug)
-                await self._load_sources(plug)
-                await self._load_packers(plug)
-            for task in async_tasks:
+        async_tasks = []
+        if not plugins:
+            plugins = [p for p in await self.locate('plugins') if p.data_dir and p.enabled]
+        if not [plugin for plugin in plugins if plugin.data_dir == 'data']:
+            plugins.append(Plugin(data_dir='data'))
+        for plug in plugins:
+            errors = []  # 记录每个加载函数的错误
+            for loader in [
+                self._load_payloads,
+                self._load_abilities,
+                self._load_objectives,
+                self._load_adversaries,
+                self._load_planners,
+                self._load_sources,
+                self._load_packers,
+                self._load_profiles,
+                self._load_vulnerabilities,
+            ]:
+                try:
+                    if loader is self._load_abilities:
+                        await loader(plug, async_tasks)
+                    else:
+                        await loader(plug)
+                except Exception as e:
+                    # 单独记录错误，但不中断其他加载
+                    self.log.debug(f"{loader.__name__} failed for plugin {plug.name if plug else ''}: {e}")
+                    errors.append(e)
+
+            # 如果七个都失败，统一报一次异常
+            if len(errors) == 7:
+                self.log.debug(f"All loaders failed for plugin {plug.name if plug else ''}")
+
+        for task in async_tasks:
+            try:
                 await task
-            await self._load_extensions()
-            await self._load_data_encoders(plugins)
-            await self.create_or_update_everything_adversary()
-            await self._verify_data_sets()
-        except Exception as e:
-            self.log.debug(repr(e), exc_info=True)
+            except Exception as e:
+                self.log.debug(repr(e), exc_info=True)
+
+        await self._load_extensions()
+        await self._load_data_encoders(plugins)
+        await self.create_or_update_everything_adversary()
+        await self._verify_data_sets()
 
     async def _load_adversaries(self, plugin):
-        for filename in glob.iglob('%s/adversaries/**/*.yml' % plugin.data_dir, recursive=True):
+        for filename in glob.iglob('%s/adversaries/**/*.yml' % plugin.data_dir, recursive=True):        
             await self.load_yaml_file(Adversary, filename, plugin.access)
 
     async def _load_abilities(self, plugin, tasks=None):
@@ -388,10 +434,13 @@ class DataService(DataServiceInterface, BaseService):
             await self.load_yaml_file(Planner, filename, plugin.access)
 
     async def _load_extensions(self):
-        for entry in self._app_configuration['payloads']['extensions']:
-            await self.get_service('file_svc').add_special_payload(entry,
-                                                                   self._app_configuration['payloads']
-                                                                   ['extensions'][entry])
+        payload_config = self._app_configuration.get("payloads", {})
+        extensions_config = payload_config.get("extensions", {})
+        for entry in extensions_config:
+            try:
+                await self.get_service('file_svc').add_special_payload(entry, extensions_config[entry])
+            except Exception:
+                self.log.debug("Failed to load payload extensions")
 
     async def _load_packers(self, plugin):
         plug_packers = dict()
@@ -407,8 +456,11 @@ class DataService(DataServiceInterface, BaseService):
         for glob_path in glob_paths:
             for module_path in glob.iglob(glob_path):
                 imported_module = import_module(module_path.replace('/', '.').replace('\\', '.').replace('.py', ''))
-                encoder = imported_module.load()
-                await self.store(encoder)
+                try:
+                    encoder = imported_module.load()
+                    await self.store(encoder)
+                except Exception as e:
+                    self.log.debug(f"Error loading data encoder at {glob_path}: {e}")
 
     async def _create_ability(self, ability_id, name=None, description=None, tactic=None, technique_id=None,
                               technique_name=None, executors=None, requirements=None, privilege=None,

@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 
 export const useProfileStore = defineStore("profileStore", {
   state: () => ({
+    //  在内存中维护现有的profiles
     profiles: [],
   }),
   getters: {
@@ -28,6 +29,31 @@ export const useProfileStore = defineStore("profileStore", {
         
       await $api.delete(`/api/v2/profiles/by-name/${encodeURIComponent(profileName)}`);
       
+    },
+
+    // src/stores/profileStore.js
+    async editProfile($api, profile) {
+      try {
+        if (!profile || !profile.profile_id) {
+          console.error("editProfile 缺少 profile_id");
+          return;
+        }
+
+        // 这里直接把整个 profile 发给后端即可，后端会用 data 里的字段更新
+        const response = await $api.patch("/api/v2/profiles", profile);
+
+        // 同步更新本地 state
+        const idx = this.profiles.findIndex(p => p.profile_id === profile.profile_id);
+        if (idx !== -1) {
+          // 后端返回的结构如果是 {status, profile: {...}} 就用 response.data.profile
+          this.profiles[idx] = response.data.profile || response.data;
+        }
+
+        return response.data;
+      } catch (error) {
+        console.error("Error updating profile:", error.response?.data || error);
+        throw error;
+      }
     },
   },
 

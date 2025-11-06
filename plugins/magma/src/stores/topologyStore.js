@@ -1,10 +1,10 @@
 import * as d3 from 'd3'
 import yaml from 'js-yaml'
 import { ref, onMounted, onBeforeUnmount, defineAsyncComponent } from 'vue'
-import platformIcon from '/home/a/Caldera/plugins/topology/static/platform.svg'
-import hotIcon from '/home/a/Caldera/plugins/topology/static/breached.svg'
-import normalIcon from '/home/a/Caldera/plugins/topology/static/idle.svg'
-import switchIcon from '/home/a/Caldera/plugins/topology/static/switch.svg'
+import platformIcon from '/home/a/APTESS/plugins/topology/static/platform.svg'
+import hotIcon from '/home/a/APTESS/plugins/topology/static/breached.svg'
+import normalIcon from '/home/a/APTESS/plugins/topology/static/idle.svg'
+import switchIcon from '/home/a/APTESS/plugins/topology/static/switch.svg'
 
 const containerEl = ref(null)
 

@@ -1,0 +1,15 @@
+name: Demo2
+file_name: topo.yml
+platform:
+- Other
+tactic:
+- Collection
+risk: High
+description: This is a Profile2 !
+file_type: yml
+profile_id: f8b49e7e-c593-432c-a186-089807a7bdb0
+platforms:
+- Other
+- macOS
+tactics:
+- Collection

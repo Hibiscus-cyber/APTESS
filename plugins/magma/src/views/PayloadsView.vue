@@ -3,14 +3,18 @@ import { inject, onMounted, computed } from "vue";
 import { storeToRefs } from "pinia";
 
 import { useCoreDisplayStore } from "@/stores/coreDisplayStore";
-import UploadModal from "@/components/payloads/UploadModal.vue";
+import UploadModal from "@/components/profiles/UploadProfile.vue";
 import { useAbilityStore } from "@/stores/abilityStore";
+import { useProfileStore } from "@/stores/profileStore";
+
 
 const $api = inject("$api");
 
 const abilityStore = useAbilityStore();
+const profileStore = useProfileStore();
 const coreDisplayStore = useCoreDisplayStore();
 const { payloads } = storeToRefs(abilityStore);
+const { profiles } = storeToRefs(profileStore);
 const { modals } = storeToRefs(coreDisplayStore);
 
 const structuredPayloads = computed(() => {
@@ -58,7 +62,7 @@ hr
     h2 本地载荷
     .columns.mb-4
         .column.is-one-quarter.is-flex.buttons.mb-0
-            button.button(@click="modals.payloads.showUpload = true")
+            button.button(@click="modals.profile.showUpload = true")
                 span.icon
                     font-awesome-icon(icon="fas fa-file-import")
                 span 上传载荷
@@ -79,7 +83,7 @@ hr
                 td {{ payload.fileName }}
                 td.is-four-fifths {{ payload.fullPath }}
                 td.has-text-centered
-                    button.delete.is-white(@click.stop="abilityStore.deletePayload($api, payload.fileName, true)")
+                    button.delete.is-white(@click.stop="abilityStore.deletePayload($api, payload.fileName, true);profileStore.deleteProfile($api, payload.fileName, true)")
 
 .content
     h2 插件载荷

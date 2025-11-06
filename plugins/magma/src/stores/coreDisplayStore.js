@@ -13,6 +13,7 @@ export const useCoreDisplayStore = defineStore("coreDisplayStore", {
         },
         profile: {
           showUpload: false,
+          showEdit: false,
         },
         payloads: {
           showUpload: false,

@@ -33,13 +33,14 @@ plugins:
 - atomic
 - compass
 - debrief
+- fieldmanual
 - manx
-- payloadmanager
-- payloads
 - response
 - sandcat
 - stockpile
-- system_time
+- training
+- profile
+- vulnerability
 - topology
 port: 8888
 reachable_host_traits:

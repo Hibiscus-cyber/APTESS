@@ -104,10 +104,6 @@ function closeModal() {
                 span(v-else) 未知风险
 
           .field
-            label.label 访问级别 / 标记
-            .display-box {{ detail.access || '未设置' }}
-
-          .field
             label.label 漏洞描述
             .display-box.display-box--multiline {{ detail.description || '暂无描述' }}
 

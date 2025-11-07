@@ -15,15 +15,13 @@ const coreDisplayStore = useCoreDisplayStore();
 const { modals } = storeToRefs(coreDisplayStore);
 const selProfile = ref(null);
 
-
-// ✅ 新增：战术/平台选项（用来做筛选）
+// 平台、战术映射关系
 const platformMap = {
   Windows: 'Windows',
   Linux: 'Linux',
   macOS: 'macOS',
   Other: '其他',
 };
-
 const tacticMap = {
   Discovery: '发现',
   Execution: '执行',
@@ -37,8 +35,6 @@ const tacticMap = {
   Impact: '影响',
   'Lateral Movement': '横向移动',
 };
-
-
 const tacticFilterOptions = [
   { label: "全部战术", value: "" },
   { label: "发现", value: "Discovery" },
@@ -53,7 +49,6 @@ const tacticFilterOptions = [
   { label: "影响", value: "Impact" },
   { label: "横向移动", value: "Lateral Movement" },
 ];
-
 const platformFilterOptions = [
   { label: "Windows", value: "Windows" },
   { label: "Linux", value: "Linux" },
@@ -61,12 +56,11 @@ const platformFilterOptions = [
   { label: "其他", value: "Other" },
 ];
 
-// ✅ filters 增加 tactic / platforms
 let filters = reactive({
   searchQuery: "",
   name: "",
-  tactic: "",        // 选中的战术 value
-  platforms: [],     // 选中的平台数组
+  tactic: "",    
+  platforms: [],     
 });
 
 // 实现过滤器功能
@@ -185,11 +179,7 @@ hr
         .ability-title
           strong.ability-name {{ profile.name || '未命名画像' }}
           span.ability-id(v-if="profile.profile_id") {{ '#' + profile.profile_id.slice(0, 8) }}
-
-
-
           span.ability-risk(:class="profile.risk === 'Low' ? 'risk-low' : profile.risk === 'Medium' ? 'risk-mid' : profile.risk === 'High' ? 'risk-high' : ''")
-
           span.ability-risk-label 风险
           span.ability-risk-value(
             v-if="profile.risk === 'Low'"

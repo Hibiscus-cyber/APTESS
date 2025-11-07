@@ -231,21 +231,21 @@ function playConfetti() {
   .z-index-1
     div
       div
-        h2 Training
+        h2 培训
       hr
 
     form
       #select-certificate.field.has-addons
-        label.label Select a certificate &nbsp;&nbsp;&nbsp;
+        label.label 选择证书 &nbsp;&nbsp;&nbsp;
         .control.is-expanded
           .select.is-small.is-fullwidth
             select.has-text-centered(v-model="selectedCert")
-              option(disabled selected value="") Select a certificate 
+              option(disabled selected value="") 请选择证书
               option(v-for="cert in certificates" :value="cert.name" :key="cert.name") {{ cert.name }}
 
     template(v-if="completedCertificate")
       .content.is-flex.is-align-items-center.is-flex-direction-column.mt-4
-        h3 🎉 Certificate complete! 🎉
+        h3 🎉 证书完成！🎉
         .field.has-addons
           .control
             input#certificatecode.input.is-small(type="text" readonly v-model="certificateCode" aria-label="Certificate code")
@@ -253,9 +253,9 @@ function playConfetti() {
             a.button.is-small(@click="copyCode()")
               span.icon
                 font-awesome-icon(icon="far fa-copy")
-              span Copy
-        p Congrats! Fill out the form to validate your code and get a certificate of completion.
-        a.button.fancy-button(href="https://forms.office.com/g/sYRNDuxCjC" target="_blank" rel="noopener") Get your certificate 🎓 
+              span 复制
+        p 恭喜！填写表单以验证您的代码并获取结业证书。
+        a.button.fancy-button(href="https://forms.office.com/g/sYRNDuxCjC" target="_blank" rel="noopener") 获取证书 🎓
 
     template(v-if="badgeList")
       .is-flex.is-justify-content-space-evenly.mt-3
@@ -282,7 +282,7 @@ function playConfetti() {
                 span.icon(:class="flag.completed ? 'flag-icon-completed' : ''")
                   font-awesome-icon(:icon="flag.completed ? 'fas fa-flag' : 'far fa-flag'")
                 p {{ flag.name }}
-              a.icon.has-tooltip-left.solution-guide-link(:class="flag.has_solution_guide ? '' : 'hidden'" :href="`/plugin/training/solution-guides/certificates/${flag.cert_name}/badges/${flag.badge_name}/flags/${flag.name}`" target="_blank" data-tooltip="Solution Guide")
+              a.icon.has-tooltip-left.solution-guide-link(:class="flag.has_solution_guide ? '' : 'hidden'" :href="`/plugin/training/solution-guides/certificates/${flag.cert_name}/badges/${flag.badge_name}/flags/${flag.name}`" target="_blank" data-tooltip="解决方案指南")
                 font-awesome-icon(icon="far fa-circle-question")
               .is-flex.is-justify-content-center.is-align-items-center.flag-card-title-badge
                 span.flag-badge-icon-container
@@ -296,12 +296,13 @@ function playConfetti() {
                   p {{ flag.extra_info }}
                   template(v-if="flag.code.includes('text-entry')")
                     span
-                      label(:for="flag.code") Write text here:
-                      input(:disabled="flag.completed" class="text-colors-black pl-1 pr-2" :id="flag.code" placeholder="type here" @input="onTextInput")
+                      label(:for="flag.code") 在此输入：
+                      input(:disabled="flag.completed" class="text-colors-black pl-1 pr-2" :id="flag.code" placeholder="在此输入" @input="onTextInput")
           .flag-show-more-button.is-flex.is-justify-content-center(@click="flag.showMore = !flag.showMore" :class="{ 'flag-show-more-active': isCardActive(index) }")
             span.icon.is-small
               font-awesome-icon(:icon="flag.showMore ? 'fas fa-chevron-up' : 'fas fa-chevron-down'")
 </template>
+
 
 <style scoped>
 #select-certificate {

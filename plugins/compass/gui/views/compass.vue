@@ -71,36 +71,36 @@ const uploadAdversaryLayer = async (e) => {
 <template lang="pug">
 
 .content
-  h2 Compass
+  h2 指南针
 p
-  | Generate a layer file for any adversary, which you can overlay on the matrix below 
-  b OR 
-  | Create an adversary in the matrix, then upload the layer file to generate an adversary to use in an operation
+  | 为任意对手生成一个图层文件，可叠加到下方矩阵中 
+  b 或 
+  | 直接在矩阵中创建一个对手，然后上传该图层文件以生成可在行动中使用的对手
 hr
 .content
   .is-flex.is-flex-direction-row.mb-4
     .is-flex.is-flex-direction-column
-      label.pb-2.is-size-6(for="layer-selection-adversary") Generate Layer
+      label.pb-2.is-size-6(for="layer-selection-adversary") 生成图层文件
       .is-flex.is-flex-direction-row
         .field.has-addons
           .control
             #layerSelectionAdversary.select.is-small
               select#layer-selection-adversary(v-model="selectedAdversaryID")
-                option(value="", selected) Select an Adversary (All)
+                option(value="", selected) 选择一个对手（全部）
                 option(v-for="adv in adversaries", :value="adv.adversary_id") {{ adv.name }}
           .control
             label(for="generateLayer")
               button#generateLayer.button.is-primary.is-small(type="button", @click="generateLayer")
                 i.pr-1.fas.fa-download
-                span.has-tooltip-multiline.has-tooltip-bottom(v-tooltip="'In the Navigator, select Open Existing Layer -> Upload from local -> and upload the generated layer file.'") Generate Layer
+                span.has-tooltip-multiline.has-tooltip-bottom(v-tooltip="'在 Navigator 中选择 Open Existing Layer -> Upload from local -> 上传生成的图层文件。'") 生成图层
     .is-flex.is-flex-direction-column.ml-6
-      label.pb-2.is-size-6 Generate Adversary
+      label.pb-2.is-size-6 生成对手
       .is-flex.is-flex-direction-row
         input#generateAdversary(type="file", @change="uploadAdversaryLayer($event.target)", hidden)
         button.button.is-primary.is-small(for="generateAdversary")
           i.pr-1.fas.fa-upload
-          span.has-tooltip-multiline.has-tooltip-bottom(v-tooltip="'Select techniques in the ATT&CK matrix below -> download the layer as json -> then upload the Adversary layer file here. You can now use the Adversary profile in Caldera, under the name given the layer file.'")
-            label(for="generateAdversary") Create Operation
+          span.has-tooltip-multiline.has-tooltip-bottom(v-tooltip="'在下方 ATT&CK 矩阵中选择技术 -> 下载为 JSON 图层 -> 上传该对手图层文件。现在你可以在 Caldera 中使用此对手配置，名称即为该图层文件名。'")
+            label(for="generateAdversary") 创建行动
         input#adversaryLayerInput(type="file", hidden)
 div
   iframe.frame(src="https://mitre-attack.github.io/attack-navigator/enterprise/")
@@ -109,7 +109,7 @@ template(v-if="openModal")
     .modal-background(@click="openModal = false")
     .modal-card
       header.modal-card-head
-        p.modal-card-title Adversary Created
+        p.modal-card-title 对手已创建
         h3() {{ adversaryCreated.name}}
         h3(x-text="adversaryCreated.response") {{adversaryCreated.response}}
       section.modal-card-body
@@ -117,22 +117,23 @@ template(v-if="openModal")
           table.table.is-striped
             thead
               tr
-                th#missing-abilities-tactic.has-text-grey Tactic
-                th#missing-abilities-technique.has-text-grey Technique ID
+                th#missing-abilities-tactic.has-text-grey 策略
+                th#missing-abilities-technique.has-text-grey 技术 ID
             tbody#missing-abilities-body
               // Pug iteration for unmatched techniques
               template(v-for="(index, item) in adversaryCreated.unmatched_techniques", :key="index")
                 tr
                 td {{item.tactic}}
                 td {{item.technique_id}}
-          p.has-text-centered An adversary is only as good as its abilities. APT layers will cover the same tactics and techniques. Procedures that accurately represent an APT only come from proper curation of an adversary.
+          p.has-text-centered 对手的强大取决于其能力。APT 图层会涵盖相同的策略与技术。准确反映 APT 行为的过程来源于合理策划与构建。
       footer.modal-card-foot
         nav.level
           .level-left
           .level-right
             .level-item
-              button.button.is-small(@click="openModal = false") Close
+              button.button.is-small(@click="openModal = false") 关闭
 </template>
+
 
 <style scoped>
 .frame {

@@ -22,23 +22,23 @@ const stockpileAdversaries = computed(() => adversaries.value.filter((adversary)
 
 <template lang="pug">
 .content    
-    h2 Stockpile
-    p The stockpile plugin contains a collection of TTPs (abilities), adversary profiles, data sources and planners. These can be used to construct dynamic operations against targeted hosts.
+    h2 库存库（Stockpile）
+    p Stockpile 插件包含一系列 TTP（能力）、对手画像、数据源和规划器。这些资源可用于针对目标主机构建动态作战行动。
 hr
 
 .is-flex.is-align-items-center.is-justify-content-center
     .card.is-flex.is-flex-direction-column.is-align-items-center.p-4.m-4
         h1.is-size-1.mb-0 {{ stockpileAbilities.length || "---" }}
-        p abilities
+        p 能力
         router-link.button.is-primary.mt-4(to="/abilities?plugin=stockpile") 
-            span View Abilities
+            span 查看能力
             span.icon
                 font-awesome-icon(icon="fas fa-angle-right")
     .card.is-flex.is-flex-direction-column.is-align-items-center.p-4.m-4
         h1.is-size-1.mb-0 {{ stockpileAdversaries.length || "---" }}
-        p adversaries
+        p 对手
         router-link.button.is-primary.mt-4(to="/adversaries") 
-            span View Adversaries
+            span 查看对手
             span.icon
                 font-awesome-icon(icon="fas fa-angle-right")
 </template>

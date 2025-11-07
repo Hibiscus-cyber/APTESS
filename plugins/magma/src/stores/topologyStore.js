@@ -1,10 +1,10 @@
 import * as d3 from 'd3'
 import yaml from 'js-yaml'
 import { ref, onMounted, onBeforeUnmount, defineAsyncComponent } from 'vue'
-import platformIcon from '/home/a/APTESS/plugins/topology/static/platform.svg'
-import hotIcon from '/home/a/APTESS/plugins/topology/static/breached.svg'
-import normalIcon from '/home/a/APTESS/plugins/topology/static/idle.svg'
-import switchIcon from '/home/a/APTESS/plugins/topology/static/switch.svg'
+import platformIcon from '@/assets/img/graph/platform.svg'
+import hotIcon from '@/assets/img/graph/breached.svg'
+import normalIcon from '@/assets/img/graph/idle.svg'
+import switchIcon from '@/assets/img/graph/switch.svg'
 import { getAgentStatus } from "@/utils/agentUtil.js";
 const containerEl = ref(null)
 
@@ -399,7 +399,7 @@ const labelEnter = labelSel.enter()
 // 第一行：展示 d.label
 labelEnter.append('text')
   .attr('class', 'label-line1')
-  .attr('fill', '#000000ff')
+  .attr('fill', '#ffffffff')
   .attr('font-size', 12)
   .attr('dy', d=> labelDy(d)) // 往下偏一点，方便放两行
   .text(d => d.label)
@@ -407,7 +407,7 @@ labelEnter.append('text')
 // 第二行：展示 d.ip
 labelEnter.append('text')
   .attr('class', 'label-line2')
-  .attr('fill', '#ffffffff')
+  .attr('fill', '#a8a8a8ff')
   .attr('font-size', 10)
   .attr('dy', d => labelDy(d)+14) // 比第一行再往下一些
   .text(d => (d.ip && d.ip.length > 0) ? d.ip.join(' & ') : '')
@@ -678,7 +678,7 @@ const labelEnter = labelSel.enter()
 // 第一行：展示 d.label
 labelEnter.append('text')
   .attr('class', 'label-line1')
-  .attr('fill', '#000000ff')
+  .attr('fill', '#ffffffff')
   .attr('font-size', 12)
   .attr('dy', d=> labelDy(d)) // 往下偏一点，方便放两行
   .text(d => d.label)
@@ -686,7 +686,7 @@ labelEnter.append('text')
 // 第二行：展示 d.ip
 labelEnter.append('text')
   .attr('class', 'label-line2')
-  .attr('fill', '#ffffffff')
+  .attr('fill', '#a8a8a8ff')
   .attr('font-size', 10)
   .attr('dy', d => labelDy(d)+14) // 比第一行再往下一些
   .text(d => (d.ip && d.ip.length > 0) ? d.ip.join(' & ') : '')

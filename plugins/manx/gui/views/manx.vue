@@ -147,42 +147,44 @@ export default {
 <template lang="pug">
 #manxPage(v-cloak)
   div(id="websocket-data" :data-websocket="mainConfig['app.contact.websocket']")
+  .content
     h2 Manx
-    p.has-text-weight-bold A coordinated access trojan (CAT)
+    p.has-text-weight-bold 协同访问木马（CAT）
     p
-      | The Manx agent, written in GoLang, connects to the server over the TCP 
-      i contact point
-      | . This raw TCP socket connection allows Manx to keep a persistent connection between host-and-server. Bundled with Manx is a reverse-shell management tool, called the 
-      i terminal
-      | - below - which allows you to establish a local shell on an agent.
-    p.has-text-weight-bold To deploy a Manx agent, go to the Agents tab.
+      | Manx 代理由 GoLang 编写，通过 TCP 
+      i 联系点
+      | 连接到服务器。此原始 TCP 套接字连接允许 Manx 在主机和服务器之间保持持久通信连接。Manx 内置了一个反向 shell 管理工具，
+      i 终端（terminal）
+      | ，可用于在代理上建立本地 shell 会话。
+    p.has-text-weight-bold 若要部署 Manx 代理，请前往 “代理” 选项卡。
   hr
   .is-flex.is-flex-direction-column
-    h3 Terminal
+    h3 终端（Terminal）
     .is-flex.is-flex-direction-row.is-justify-content-space-around.mb-5
       .select.is-small
         select#session-id(v-model="selectedSessionID" @change="getTactics")
-          option(value="" disabled selected) Select a session
+          option(value="" disabled selected) 选择会话
           template(v-for="s in sessions" :key="s.id")
             option(:value="s.id" :data-paw="s.info" :data-platform="s.platform" :data-executor="s.executors ? s.executors[0] : 'sh'" v-text="s.id + ' - ' + s.info")
       .select.is-small
         select(v-model="selectedTacticName" id="tactic-filter" @change="getTechniques")
-          option(value="" disabled selected) Select a tactic
+          option(value="" disabled selected) 选择战术
           template(v-for="a in tactics" :key="a.ability_id")
             option(v-text="a.tactic")
       .select.is-small
         select(v-model="selectedTechniqueID" @change="getProcedures")
-          option(value="" disabled selected) Select a technique
+          option(value="" disabled selected) 选择技术
           template(v-for="t in techniques" :key="t.technique_id")
             option(:value="t.technique_id" v-text="t.technique_id + ' | ' + t.technique_name")
       .select.is-small
         select#procedure-filter(v-model="selectedProcedureID" @change="getProcedure")
-          option(value="" disabled selected) Select a procedure
+          option(value="" disabled selected) 选择过程
           template(v-for="p in procedures")
             option(v-text="p.name" :value="p.ability_id")
     input(style="visibility:hidden;position:absolute" id="xterminal-command" v-model="terminalCommand")
     div#xterminal
 </template>
+
 
 <style>
 .terminal {

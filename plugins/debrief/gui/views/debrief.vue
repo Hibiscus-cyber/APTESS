@@ -621,12 +621,13 @@ export default {
 
 <template lang="pug">
 div
-  h2 Debrief
+.content
+  h2 复盘
   p
-    strong Campaign Analytics.
-    |  Debrief gathers overall campaign information and analytics for a selected 
-    |  set of operations. It provides a centralized view of operation metadata, graphical displays of 
-    |  the operations, the techniques and tactics used, and the facts discovered by the operations.
+    strong 战役分析。
+    |  复盘会为所选的一组行动汇聚整体战役信息与分析，
+    |  提供集中化的行动元数据视图、行动可视化图形、
+    |  所使用的技术与策略，以及行动过程中发现的事实。
 
 hr
 
@@ -635,21 +636,21 @@ div
     button.button.is-primary.is-small(:disabled="!selectedOperationIds.length", @click="showGraphSettingsModal = true")
       span.icon.is-small
         font-awesome-icon(icon="fas fa-cog")
-      span Graph Settings
+      span 图表设置
     button.button.is-primary.is-small(:disabled="!selectedOperationIds.length", @click="showReportModal = true")
       span.icon.is-small
         font-awesome-icon(icon="fas fa-download")
-      span Download PDF Report
+      span 下载 PDF 报告
     button.button.is-primary.is-small(:disabled="!selectedOperationIds.length", @click="downloadJSON")
       span.icon.is-small
         font-awesome-icon(icon="fas fa-download")
-      span Download Operation JSON
+      span 下载行动 JSON
 
   .columns.mb-6
     .column.is-3
       form
         .field
-          label.label Select one or more operations
+          label.label 选择一个或多个行动
           .control.is-expanded
             .select.is-small.is-fullwidth.is-multiple
               select(size="10", multiple, v-model="selectedOperationIds", @change="loadOperation")
@@ -663,11 +664,11 @@ div
         .is-flex.graph-controls.m-2
           .select.is-small.mr-2
             select(v-model="selectedGraphType")
-              option(value="attackpath") Attack Path
-              option(value="steps") Steps
-              option(value="tactic") Tactic
-              option(value="technique") Technique
-          button.button.is-small(@click="toggleLegend") {{ showGraphLegend ? 'Hide' : 'Show' }} Legend
+              option(value="attackpath") 攻击路径
+              option(value="steps") 步骤
+              option(value="tactic") 策略
+              option(value="technique") 技术
+          button.button.is-small(@click="toggleLegend") {{ showGraphLegend ? '隐藏' : '显示' }} 图例
         svg#debrief-steps-svg.op-svg.debrief-svg(v-show="selectedGraphType === 'steps'")
         svg#debrief-attackpath-svg.op-svg.debrief-svg(v-show="selectedGraphType === 'attackpath'")
         svg#debrief-tactic-svg.op-svg.debrief-svg(v-show="selectedGraphType === 'tactic'")
@@ -695,27 +696,27 @@ div
   .tabs.is-centered(v-show="selectedOperationIds.length")
     ul.ml-0
       li(:class="{ 'is-active': activeTab === 'stats' }", @click="activeTab = 'stats'")
-        a Stats
+        a 统计
       li(:class="{ 'is-active': activeTab === 'agents' }", @click="activeTab = 'agents'")
-        a Agents
+        a 代理
       li(:class="{ 'is-active': activeTab === 'steps' }", @click="activeTab = 'steps'")
-        a Steps
+        a 步骤
       li(:class="{ 'is-active': activeTab === 'tactics' }", @click="activeTab = 'tactics'")
-        a Tactics & Techniques
+        a 策略与技术
       li(:class="{ 'is-active': activeTab === 'facts' }", @click="activeTab = 'facts'")
-        a Fact Graph
+        a 事实图谱
 
   div(v-show="selectedOperationIds.length")
     div(v-show="activeTab === 'stats'")
       table.table.is-striped
-        caption Operation Statistics
+        caption 行动统计
         thead
           tr
-            th Name
-            th State
-            th Planner
-            th Objective
-            th Time
+            th 名称
+            th 状态
+            th 策划器
+            th 目标
+            th 时间
         tbody
           template(v-for="stat in stats")
             tr
@@ -727,15 +728,15 @@ div
 
     div(v-show="activeTab === 'agents'")
       table.table.is-striped
-        caption Operation Agents
+        caption 行动代理
         thead
           tr
-            th Paw
-            th Host
-            th Platform
-            th Username
-            th Privilege
-            th Executable
+            th Paw（代理ID）
+            th 主机
+            th 平台
+            th 用户名
+            th 权限
+            th 可执行文件
         tbody
           template(v-for="agent in agents")
             tr
@@ -748,15 +749,15 @@ div
 
     div(v-show="activeTab === 'steps'")
       table.table.is-striped
-        caption Operation Steps
+        caption 行动步骤
         thead
           tr
-            th Status
-            th Time
-            th Name
-            th Agent
-            th Operation
-            th Command
+            th 状态
+            th 时间
+            th 名称
+            th 代理
+            th 行动
+            th 命令
         tbody
           template(v-for="step in steps")
             tr
@@ -766,7 +767,7 @@ div
               td {{ step.paw }}
               td {{ step.operation_name }}
               td
-                button.button.is-small(@click="showCommand(step.id, step.command, step.ability.name)") Show Command
+                button.button.is-small(@click="showCommand(step.id, step.command, step.ability.name)") 查看命令
 
     div(v-show="activeTab === 'tactics'")
       template(v-for="tactic in tacticsAndTechniques")
@@ -776,12 +777,12 @@ div
           .card-content
             .content
               p.has-text-centered
-                strong Techniques
+                strong 技术
               ul
                 template(v-for="technique in Object.keys(tactic.techniques)")
                   li {{ `${tactic.techniques[technique]} | ${technique}` }}
               p.has-text-centered
-                strong Steps
+                strong 步骤
               template(v-for="step in tactic.steps")
                 .block
                   p {{ step.operation }}
@@ -800,53 +801,53 @@ div
     .modal-background(@click="showGraphSettingsModal = false")
     .modal-card
       header.modal-card-head
-        p.modal-card-title Graph Settings
+        p.modal-card-title 图表设置
       section.modal-card-body
         p
-          strong Display Options
+          strong 显示选项
         form
           .field
             .control
               label.checkbox
                 input(type="checkbox", v-model="graphOptionLabels", @change="toggleLabels")
-                |  Show labels
+                |  显示标签
           .field
             .control
               label.checkbox
                 input(type="checkbox", v-model="graphOptionIcons", @change="toggleIcons")
-                |  Show icons
+                |  显示图标
         p
-          strong Data Options
+          strong 数据选项
         form
           .field
             .control
               label.checkbox
                 input(type="checkbox", v-model="graphOptionSteps", @change="toggleSteps")
-                |  Show operation steps
+                |  显示行动步骤
           .field
             .control
               label.checkbox
                 input(type="checkbox", @change="toggleTactics")
-                |  Show steps as tactics
+                |  以策略展示步骤
       footer.modal-card-foot
         nav.level
           .level-left
           .level-right
             .level-item
-              button.button.is-small(@click="showGraphSettingsModal = false") Close
+              button.button.is-small(@click="showGraphSettingsModal = false") 关闭
 
   .modal(v-bind:class="{ 'is-active': showCommandModal }")
     .modal-background(@click="showCommandModal = false")
     .modal-card
       header.modal-card-head
-        p.modal-card-title {{ `Step: ${commandAbilityName}` }}
+        p.modal-card-title {{ `步骤：${commandAbilityName}` }}
       section.modal-card-body
-        p Command
+        p 命令
         pre {{ command }}
-        p {{ `Standard Output${commandOutput.stdout ? '' : ': Nothing to show'}` }}
+        p {{ `标准输出${commandOutput.stdout ? '' : '：无可显示内容'}` }}
         template(v-if="commandOutput != '' && commandOutput.stdout !== ''")
           pre.has-text-left.white-space-pre-line {{ commandOutput.stdout }}
-        p {{ `Standard Error${commandOutput.stderr ? '' : ': Nothing to show'}` }}
+        p {{ `标准错误${commandOutput.stderr ? '' : '：无可显示内容'}` }}
         template(v-if="commandOutput != '' && commandOutput.stderr !== ''")
           pre.has-text-left.white-space-pre-line.has-text-danger {{ commandOutput.stderr }}
       footer.modal-card-foot
@@ -854,30 +855,30 @@ div
           .level-left
           .level-right
             .level-item
-              button.button.is-small(@click="showCommandModal = false") Close
+              button.button.is-small(@click="showCommandModal = false") 关闭
 
   .modal(v-bind:class="{ 'is-active': showReportModal }")
     .modal-background(@click="showReportModal = false")
     .modal-card
       header.modal-card-head
-        p.modal-card-title Download Report as PDF
+        p.modal-card-title 以 PDF 下载报告
       section.modal-card-body.content.mb-0
-        h5 Report Header Logo
-        p.help Select a logo to appear in the top right corner of each page.
+        h5 报告页眉徽标
+        p.help 选择一个徽标，它将显示在每页右上角。
         form
           label.checkbox
             input(type="checkbox", v-model="useCustomLogo", @change="useCustomLogoChange")
-            | Use custom logo
+            | 使用自定义徽标
         .mt-3
         .columns(v-show="useCustomLogo")
           .column.is-6.m-0
             form
               .field
-                label.label Select a logo
+                label.label 选择徽标
                 .control
                   .select.is-small.is-fullwidth
                     select(v-model="logoFilename")
-                      option(default, disabled, value="") Select a logo
+                      option(default, disabled, value="") 请选择徽标
                       template(v-for="logo in logos", :key="logo")
                         option(v-bind:value="logo") {{ logo }}
               .field
@@ -887,15 +888,15 @@ div
                     span.file-cta
                       span.file-icon
                         i.fas.fa-upload
-                      span.file-label Upload new logo…
+                      span.file-label 上传新徽标…
           .column.is-6.m-0.is-flex.is-align-items-center.is-justify-content-center
             template(v-if="logoFilename")
-              img(:alt="'Logo to use for report header'", :src="`/logodebrief/header-logos/${logoFilename}`")
-            p(v-else) Select a logo to see preview
-        h5 Report Sections
-        p.help Sections that are checked will be displayed in the report in order as shown in the list below.
+              img(:alt="'用于报告页眉的徽标'", :src="`/logodebrief/header-logos/${logoFilename}`")
+            p(v-else) 选择徽标以预览
+        h5 报告章节
+        p.help 勾选的章节将按下方列表顺序显示在报告中。
         table
-          caption Sections to display in report
+          caption 报告中显示的章节
           thead
             tr
               th(scope="col")
@@ -918,23 +919,23 @@ div
         nav.level
           .level-left
             .level-item
-              button.button.is-small(@click="showReportModal = false") Close
+              button.button.is-small(@click="showReportModal = false") 关闭
           .level-right
             .level-item
-              button.button.is-small.is-primary(@click="downloadPDF") Download
+              button.button.is-small.is-primary(@click="downloadPDF") 下载
 
   .modal(v-bind:class="{ 'is-active': showCommandModal }")
     .modal-background(@click="showCommandModal = false")
     .modal-card
       header.modal-card-head
-        p.modal-card-title {{ `Step: ${commandAbilityName}` }}
+        p.modal-card-title {{ `步骤：${commandAbilityName}` }}
       section.modal-card-body
-        p Command
+        p 命令
         pre {{ command }}
-        p {{ `Standard Output${commandOutput.stdout ? '' : ': Nothing to show'}` }}
+        p {{ `标准输出${commandOutput.stdout ? '' : '：无可显示内容'}` }}
         template(v-if="commandOutput && commandOutput.stdout")
           pre.has-text-left.white-space-pre-line {{ commandOutput.stdout }}
-        p {{ `Standard Error${commandOutput.stderr ? '' : ': Nothing to show'}` }}
+        p {{ `标准错误${commandOutput.stderr ? '' : '：无可显示内容'}` }}
         template(v-if="commandOutput && commandOutput.stderr")
           pre.has-text-left.white-space-pre-line.has-text-danger {{ commandOutput.stderr }}
 
@@ -943,5 +944,5 @@ div
           .level-left
           .level-right
             .level-item
-              button.button.is-small(@click="showCommandModal = false") Close
+              button.button.is-small(@click="showCommandModal = false") 关闭
 </template>

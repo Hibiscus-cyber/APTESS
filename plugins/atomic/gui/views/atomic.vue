@@ -21,17 +21,16 @@ const atomicAbilities = computed(() => abilities.value.filter((ability) => abili
 
 <template lang="pug">
 .content    
-    h2 Atomic
-    p The collection of abilities in the Red Canary Atomic test project.
+    h2 原子能力
+    p Red Canary 原子能力测试项目中的能力集合。
 hr
 
 .is-flex.is-align-items-center.is-justify-content-center
     .card.is-flex.is-flex-direction-column.is-align-items-center.p-4.m-4
         h1.is-size-1.mb-0 {{ atomicAbilities.length || "---" }}
-        p abilities
+        p 个能力
         router-link.button.is-primary.mt-4(to="/abilities?plugin=atomic") 
-            span View Abilities
+            span 查看能力
             span.icon
                 font-awesome-icon(icon="fas fa-angle-right")
-
 </template>

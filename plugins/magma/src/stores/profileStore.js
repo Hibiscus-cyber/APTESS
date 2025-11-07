@@ -38,7 +38,6 @@ export const useProfileStore = defineStore("profileStore", {
           console.error("editProfile 缺少 profile_id");
           return;
         }
-
         // 这里直接把整个 profile 发给后端即可，后端会用 data 里的字段更新
         const response = await $api.patch("/api/v2/profiles", profile);
 

@@ -1,5 +1,5 @@
 <script setup>
-import { useProfileStore } from "@/stores/profileStore";
+
 import { storeToRefs } from "pinia";
 import { ref, onMounted, onBeforeUnmount,watch,inject,reactive} from 'vue'
 import {
@@ -16,8 +16,7 @@ import {
   get_fileName,
 } from '@/stores/topologyStore.js'
 const $api = inject("$api");
-const profileStore = useProfileStore();
-const { profiles } = storeToRefs(profileStore);
+
 
 const fileName=ref('')
 const containerEl = ref(null)
@@ -44,7 +43,7 @@ onMounted(async () => {
   // 启动轮询
   startPolling()
   fileName.value = get_fileName()
-  await profileStore.getProfiles($api);
+  
   const savedState = localStorage.getItem('graphState')
   if (savedState) {
     try {

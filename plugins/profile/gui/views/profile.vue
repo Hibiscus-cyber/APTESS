@@ -15,12 +15,6 @@ const coreDisplayStore = useCoreDisplayStore();
 const { modals } = storeToRefs(coreDisplayStore);
 const selProfile = ref(null);
 
-let validation = reactive({
-  name: "Demo Profile,",
-  platform: " Window10",
-  description: "just a demo profile item!",
-  tags: " [red, demo]",
-});
 
 // ✅ 新增：战术/平台选项（用来做筛选）
 const platformMap = {
@@ -121,9 +115,6 @@ function selectProfile(profile) {
   selProfile.value = profile;
 }
 
-function validateAndSave() {
-  profileStore.saveProfile($api, validation);
-}
 </script>
 
 

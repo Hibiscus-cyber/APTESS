@@ -267,12 +267,19 @@ class DataService(DataServiceInterface, BaseService):
             await self.load_yaml_file(Vulnerability, filename, plugin.access)
 
     async def load_yaml_file(self, object_class, filename, access):
-
+        if object_class == Vulnerability:
+            print("((((((((((((((((((((((((----------------Vulnerability--------------------))))))))))))))))))))))))")
+            print( self.strip_yml(filename))
+        if object_class == Profile:
+            print("((((((((((((((((((((((((--------------------Profile----------------))))))))))))))))))))))))")
+            print( self.strip_yml(filename))
         for src in self.strip_yml(filename):
             obj = object_class.load(src)
             obj.access = access
             obj.plugin = self._get_plugin_name(filename)
-
+            if object_class == Vulnerability:
+                print("((((((((((((((((((((((((------------------------------------))))))))))))))))))))))))")
+                print(obj)
             await self.store(obj)
 
     async def create_or_update_everything_adversary(self):

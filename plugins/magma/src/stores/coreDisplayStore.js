@@ -15,6 +15,9 @@ export const useCoreDisplayStore = defineStore("coreDisplayStore", {
           showUpload: false,
           showEdit: false,
         },
+        vulnerability: {
+          showVul: false,
+        },
         payloads: {
           showUpload: false,
         },

@@ -4,31 +4,31 @@ nodes:
   - id: P
     group: Platform
     label: 平台
-    ip: 192.168.0.100
+    ip: local
   - id: W
     group: Breached
     label: Windows10主机
-    ip: 192.168.0.101
+    ip: 192.168.0.162
   - id: LA
     group: Breached
     label: 边界网关服务器
     ip: 
-      - 192.168.0.102
-      - 192.168.0.105
+      - 192.168.0.192
+      - 192.168.100.3
   - id: SW
-    group: Other
+    group: Switch
     label: 交换机1
   - id: SW2
-    group: Other
+    group: Switch
     label: 交换机2
   - id: LB
     group: Idle
     label: 内网服务器
-    ip: 192.168.0.103
+    ip: 192.168.100.1
   - id: LC
     group: Idle
     label: 网络管理服务器
-    ip: 192.168.0.104
+    ip: 192.168.100.2
     
 links:
   - source: [W,LA,P]

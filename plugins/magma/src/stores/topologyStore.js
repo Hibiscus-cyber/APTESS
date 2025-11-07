@@ -5,7 +5,7 @@ import platformIcon from '/home/a/APTESS/plugins/topology/static/platform.svg'
 import hotIcon from '/home/a/APTESS/plugins/topology/static/breached.svg'
 import normalIcon from '/home/a/APTESS/plugins/topology/static/idle.svg'
 import switchIcon from '/home/a/APTESS/plugins/topology/static/switch.svg'
-
+import { getAgentStatus } from "@/utils/agentUtil.js";
 const containerEl = ref(null)
 
 let flag=0;
@@ -133,18 +133,23 @@ function getNodeColor(node) {
 // 获取后端数据，并执行染色函数
 async function refreshHotSet() {
   try {
-    const resp = await fetch('/api/v2/agents') // 后端接口
-    const json = await resp.json()
-    hotSet = new Set(
-      json
-        .flatMap(item => item.host_ip_addrs || []) // 展开每个列表
-        .filter(ip => typeof ip === 'string' && ip.trim() !== '') // 去掉空值
-)
-    recolorNodes() // 每次更新后重新染色
+    const resp = await fetch('/api/v2/agents'); // 后端接口
+    const agents = await resp.json();
+
+    // 只取存活或待终止代理的 IP
+    const hotIps = agents
+      .filter(a => getAgentStatus(a) === 'alive' || getAgentStatus(a) === 'pending kill')
+      .flatMap(a => a.host_ip_addrs || [])
+      .filter(ip => typeof ip === 'string' && ip.trim() !== '');
+
+    hotSet = new Set(hotIps);
+
+    recolorNodes(); // 每次更新后重新染色
   } catch (err) {
-    console.warn('获取 hot-nodes 失败:', err)
+    console.warn('获取 hot-nodes 失败:', err);
   }
 }
+
 // async function refreshHotSet() {
 //   try {
 //     const resp = await fetch('/api/v2/profiles') // 后端接口
